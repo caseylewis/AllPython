@@ -1,0 +1,68 @@
+[
+    {
+        "Name": "AT&T Internet",
+        "Value": "50",
+        "Frequency": "Monthly",
+        "Account": "Utilities"
+    },
+    {
+        "Name": "COA Electricity",
+        "Value": "58",
+        "Frequency": "Monthly",
+        "Account": "Utilities"
+    },
+    {
+        "Name": "Car Bill",
+        "Value": "100",
+        "Frequency": "Monthly",
+        "Account": "Utilities"
+    },
+    {
+        "Name": "Great Lakes Loan",
+        "Value": "815",
+        "Frequency": "Monthly",
+        "Account": "Student Loans"
+    },
+    {
+        "Name": "Groceries/Gas",
+        "Value": "800",
+        "Frequency": "Monthly",
+        "Account": "Groceries Bank"
+    },
+    {
+        "Name": "Nelnet Loan",
+        "Value": "239",
+        "Frequency": "Monthly",
+        "Account": "Student Loans"
+    },
+    {
+        "Name": "Phone Bill",
+        "Value": "50",
+        "Frequency": "Monthly",
+        "Account": "Utilities"
+    },
+    {
+        "Name": "Rent",
+        "Value": "1500",
+        "Frequency": "Monthly",
+        "Account": "Online Spending Bank"
+    },
+    {
+        "Name": "Yearly Car Maintenance",
+        "Value": "1000",
+        "Frequency": "Yearly",
+        "Account": "Car Maintenance"
+    },
+    {
+        "Name": "Yearly Coby",
+        "Value": "1000",
+        "Frequency": "Yearly",
+        "Account": "Coby Fund"
+    },
+    {
+        "Name": "Yearly Vacation",
+        "Value": "2000",
+        "Frequency": "Yearly",
+        "Account": "Vacation"
+    }
+]
