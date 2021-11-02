@@ -71,7 +71,7 @@ class BudgetHelper(NavigableTkFrame):
         self._account_summary_frame.account_expense_map_frame.populate_expenses(self._expenses_list)
         self._expense_summary_frame.expense_summary_frame.update_expense_summary(self._expenses_list)
 
-        self.show_frame(self._frame_idxs.EXPENSE_SUMMARY)
+        self.show_frame(self._frame_idxs.ACCOUNT)
 
     def __handle_close(self):
         self.__save_all_data()
