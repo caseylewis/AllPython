@@ -326,61 +326,10 @@ class BudgetHelper(NavigableTkFrame):
         account_expense_list = self.__get_expenses_of_account(account)
         self._account_summary_frame.refresh_account_info(account_expense_list, account)
 
-    # def account_changed(self):
-    #     print("ACCOUNT CHANGED")
-    #     current_account_name = self._account_summary_frame._account_expense_map_frame.get_active_account_name()
-    #     # ACCOUNT EXPENSE MAP
-    #     self._account_summary_frame.account_expense_list_clear()
-    #     self._account_summary_frame.account_summary_frame.clear_stats()
-    #     if current_account_name != self._account_summary_frame._account_expense_map_frame.default_account_option:
-    #         account = self.get_object_by_name_from_list(current_account_name, self._accounts_list)
-    #         expenses_list = self.get_expenses_of_account(account)
-    #         self._account_summary_frame._account_expense_map_frame.account_expense_list_populate(expenses_list)
-    #         print(current_account_name)
-    #         # ACCOUNT SUMMARY
-    #         self._account_summary_frame.account_summary_frame.refresh_account_summary(account, expenses_list)
-    #
-    # def unassign_expense(self, expense_name):
-    #     print("UNASSIGN ACCOUNT")
-    #     print(expense_name)
-    #     account_name = self._account_summary_frame._account_expense_map_frame.get_active_account_name()
-    #     account = self.get_object_by_name_from_list(account_name, self._accounts_list)
-    #     expense = self.get_object_by_name_from_list(expense_name, self._expenses_list)
-    #     # UPDATE EXPENSE IN DATA
-    #     expense[Expense.keys.ACCOUNT] = None
-    #
-    #     # REMOVE EXPENSE FROM ACCOUNT LIST
-    #     self._account_summary_frame._account_expense_map_frame.remove_expense_from_account_by_name(expense_name)
-    #
-    #     # ADD EXPENSE TO AVAILABLE LIST
-    #     self._account_summary_frame._account_expense_map_frame.append_to_available_expense_list(expense)
-    #
-    #     # REFRESH ACCOUNT SUMMARY
-    #     expenses_list = self.get_expenses_of_account(account)
-    #     self._account_summary_frame.account_summary_frame.refresh_account_summary(account, expenses_list)
-    #
-    # def assign_expense_to_account(self, expense_name, account_name):
-    #     print("ASSIGN ACCOUNT")
-    #     account = self.get_object_by_name_from_list(account_name, self._accounts_list)
-    #     expense = self.get_object_by_name_from_list(expense_name, self._expenses_list)
-    #     # UPDATE EXPENSE IN DATA
-    #     expense[Expense.keys.ACCOUNT] = account[Account.keys.NAME]
-    #
-    #     # REMOVE EXPENSE FROM AVAILABLE LIST
-    #     self._account_summary_frame._account_expense_map_frame.remove_expense_from_available_by_name(expense_name)
-    #
-    #     # ADD EXPENSE TO ACCOUNT LIST
-    #     self._account_summary_frame._account_expense_map_frame.append_to_account_expense_list(expense)
-    #
-    #     # REFRESH ACCOUNT SUMMARY
-    #     expenses_list = self.get_expenses_of_account(account)
-    #     self._account_summary_frame.refresh_account_info(expenses_list, account)
-
     ####################################################################################################################
     # EXPENSE SUMMARY RELATED FUNCTIONS
-    def update_expense_summary(self):
-        self._expense_summary_frame.expense_summary_frame.update_expense_summary(self._expenses_list)
 
+    ####################################################################################################################
     # PAYMENT OVERVIEW RELATED FUNCTIONS
     def __payment_info_changed(self, payment_dict):
         self._payment_dict = payment_dict
