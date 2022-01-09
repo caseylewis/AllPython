@@ -144,3 +144,4 @@ cython_debug/
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 /App_3500ParkingLogin/data_3500ParkingLogin/
+/App_BudgetHelper/data_BudgetHelper/
