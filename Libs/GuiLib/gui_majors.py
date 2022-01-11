@@ -1,6 +1,32 @@
 from Libs.GuiLib.gui_standards import *
 
 
+class NavigationButton(Frame):
+    def __init__(self, root, text, index, on_click_func=None, **kwargs):
+        super().__init__(root)
+
+        self._index = index
+        self.__on_click_callback = on_click_func
+
+        self._button = Button(self, text=text, command=lambda: self.__handle_nav_btn(), **kwargs)
+        self._button.grid(row=0, column=0, padx=(0, 10), sticky='nsew')
+
+    def config(self, *args, **kwargs):
+        self._button.config(*args, **kwargs)
+
+    def activate(self):
+        bg = self._button['fg']
+        self.configure(bg=bg)
+
+    def deactivate(self):
+        bg = self._button['bg']
+        self.configure(bg=bg)
+
+    def __handle_nav_btn(self):
+        if self.__on_click_callback is not None:
+            self.__on_click_callback(self._index)
+
+
 class ContentFrame(Frame):
     def __init__(self, root, title, *args, **kwargs):
         super().__init__(root, bg=FRAME_BG_STANDARD, *args, **kwargs)
@@ -69,7 +95,7 @@ class NavigableTkFrame(Frame):
                             "Index '{}' already used.".format(str(index)))
 
         # CREATE NAV BUTTON AND ADD TO NAV BTN DICT
-        nav_btn = Button(self._nav_bar.view_port, text=content_frame.title, command=lambda i=index: self.show_frame(i), **self._nav_btn_style)
+        nav_btn = NavigationButton(self._nav_bar.view_port, text=content_frame.title, index=index, on_click_func=self.__handle_nav_btn_clicked, **self._nav_btn_style)
         self._nav_btns_dict[index] = nav_btn
 
         # ADD CONTENT FRAME TO CONTENT FRAME CHILD DICT
@@ -93,20 +119,23 @@ class NavigableTkFrame(Frame):
         # ALWAYS SHOW THE FIRST FRAME
         self.show_frame(0)
 
+    def __handle_nav_btn_clicked(self, index):
+        self.show_frame(index)
+
     def show_frame(self, index):
         # HIDE ALL OTHER FRAMES
         for frame in self._content_frame_child_dict.values():
             frame.grid_remove()
         # STYLE ALL NAV BTNS
         for nav_btn in self._nav_btns_dict.values():
-            nav_btn.config(**self._nav_btn_style)
+            nav_btn.deactivate()
         # INVERT NAV BTN AT INDEX
         self.__invert_nav_btn_at_idx(index)
         # SHOW THE FRAME FROM THE INDEX PROVIDED, SINCE THEY HAVE ALREADY BEEN GRIDDED THE GRID FUNCTION NEEDS NO ARGS.
         self._content_frame_child_dict[index].grid()
 
     def __invert_nav_btn_at_idx(self, index):
-        self._nav_btns_dict[index].config(bg=self._nav_btn_style['fg'], fg=self._nav_btn_style['bg'])
+        self._nav_btns_dict[index].activate()
 
     def handle_close(self):
         for frame in self._content_frame_child_dict.values():
