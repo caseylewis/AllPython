@@ -81,7 +81,7 @@ class PaymentBreakdownFrame(StandardFrame):
         self._leftover_percent_display.grid(row=2, column=2, **StandardLabel.grid_args)
 
     def update_breakdown(self, payment_dict, expenses_list):
-        salary = int(payment_dict[KEY_SALARY])
+        salary = float(payment_dict[KEY_SALARY])
         pay_frequency = payment_dict[KEY_PAY_FREQUENCY]
         gross_paycheck = 0
         yearly_expenses = 0
