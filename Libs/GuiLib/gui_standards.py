@@ -2,9 +2,14 @@ from abc import abstractmethod
 
 from Libs.GuiLib.gui_styles import style, grid_style
 from Libs.GuiLib.gui_widgets_plus import *
+from Libs.GuiLib.gui_functions import *
 
 # STYLES
 STD_WIDTH = 15
+
+# FRAMES
+ROOT_BG = '#212121'
+FRAME_BG_STANDARD = '#242B2E'
 
 # BUTTONS
 BTN_BG_STANDARD = '#538FFB'
@@ -20,9 +25,8 @@ LBL_FG_TITLE = 'white'
 LBL_BG_STANDARD = '#758283'
 LBL_FG_STANDARD = 'white'
 
-# FRAMES
-ROOT_BG = '#212121'
-FRAME_BG_STANDARD = '#242B2E'
+LBL_BG_HEADER = '#CAD5E2'
+LBL_FG_HEADER = ROOT_BG
 
 
 class AbstractGridWidget:
@@ -166,6 +170,24 @@ class StandardLabel(Label, AbstractGridWidget):
         'width': STD_WIDTH,
         'height': 1,
     }
+    left_style_args = copy_dict(style_args)
+    left_style_args['anchor'] = W
+
+    right_style_args = copy_dict(style_args)
+    right_style_args['anchor'] = E
+
+    header_args = copy_dict(style_args)
+    header_args['bg'] = LBL_BG_HEADER
+    header_args['fg'] = LBL_FG_HEADER
+
+    left_header_args = copy_dict(header_args)
+    left_header_args['anchor'] = W
+
+    right_header_args = copy_dict(header_args)
+    right_header_args['anchor'] = E
+
+    decimal_args = copy_dict(style_args)
+    decimal_args['anchor'] = E
 
     def __init__(self, root, text, **kwargs):
         super().__init__(
@@ -177,6 +199,14 @@ class StandardLabel(Label, AbstractGridWidget):
 
     def set(self, set_text):
         self['text'] = str(set_text)
+
+    def set_decimal(self, set_decimal):
+        decimal_format = "{:.2f}"
+        self.set(decimal_format.format(set_decimal))
+
+    def set_percentage(self, set_percentage):
+        percentage_format = "{:.1f}"
+        self.set(percentage_format.format(set_percentage))
 
 
 # ENTRIES
