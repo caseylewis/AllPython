@@ -11,30 +11,22 @@ class AccountInfoFrame(StandardFrame):
         self._info_lbl_title = TitleLabel(self, text="Account Info")
         self._info_lbl_title.grid(row=0, column=0, columnspan=2, **TitleLabel.grid_args)
 
-        lbl_kwargs = {
-            'anchor': W,
-        }
-
-        display_kwargs = {
-            'anchor': E,
-        }
-
         # ACCOUNT NUMBER
-        self._account_number_lbl = StandardLabel(self, text="Account #", **lbl_kwargs)
+        self._account_number_lbl = StandardLabel(self, text="Account #", **StandardLabel.left_style_args)
         self._account_number_lbl.grid(row=1, column=0, **StandardLabel.grid_args)
 
-        self._account_number_display = StandardLabel(self, "", **display_kwargs)
+        self._account_number_display = StandardLabel(self, "", **StandardLabel.right_style_args)
         self._account_number_display.grid(row=1, column=1, **StandardLabel.grid_args)
 
         # ROUTE NUMBER
-        self._route_number_lbl = StandardLabel(self, text="Route #", **lbl_kwargs)
+        self._route_number_lbl = StandardLabel(self, text="Route #", **StandardLabel.left_style_args)
         self._route_number_lbl.grid(row=2, column=0, **StandardLabel.grid_args)
 
-        self._route_number_display = StandardLabel(self, "", **display_kwargs)
+        self._route_number_display = StandardLabel(self, "", **StandardLabel.right_style_args)
         self._route_number_display.grid(row=2, column=1, **StandardLabel.grid_args)
 
         # DESCRIPTION
-        self._description_lbl = StandardLabel(self, text="Description", **lbl_kwargs)
+        self._description_lbl = StandardLabel(self, text="Description", **StandardLabel.left_style_args)
         self._description_lbl.grid(row=3, column=0, **StandardLabel.grid_args)
 
         self._description_display = StandardLabel(self, "")  # NOT PART OF DISPLAY KWARGS
