@@ -2,6 +2,7 @@ from Libs.GuiLib.gui_standards import *
 from App_BudgetHelper.components.PaymentOverview.PaymentEntryFrame import KEY_SALARY, KEY_PAY_FREQUENCY
 from App_BudgetHelper.components.PaymentOverview.PayFrequencies import *
 from App_BudgetHelper.components.Expenses.expenses import *
+from App_BudgetHelper.components.PaymentOverview.TaxBrackets import calculate_taxes_owed, FederalTaxBracket
 
 
 class PaymentBreakdownFrame(StandardFrame):
@@ -11,37 +12,87 @@ class PaymentBreakdownFrame(StandardFrame):
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure(2, weight=1)
 
-        display_kwargs = {
-            'anchor': E,
-        }
-
         # TITLE
         self._title = TitleLabel(self, "Pay Breakdown")
         self._title.grid(row=0, column=0, columnspan=3, **TitleLabel.grid_args)
 
         # PAYMENT INFO DISPLAY
+        class cols:
+            LBL = 0
+            DISPLAY = 1
+
+        class rows:
+            SALARY_HEADER = 0
+            SALARY = 1
+            PAY_FREQ = 2
+            PAY_HEADER = 3
+            GROSS = 4
+            NET = 5
+            DED_HEADER = 6
+            PRE_TAX = 7
+            FED_TAX = 8
+            FICA_TAX = 9
+        c = cols()
+        r = rows()
+
         self._payment_info_frame = StandardFrame(self)
         self._payment_info_frame.grid(row=1, column=1, **StandardFrame.grid_args)
         self._payment_info_frame.grid_columnconfigure(0, weight=1)
         self._payment_info_frame.grid_columnconfigure(1, weight=1)
 
-        self._salary_lbl = StandardLabel(self._payment_info_frame, "Salary")
-        self._salary_lbl.grid(row=0, column=0, **StandardLabel.grid_args)
+        # SALARY
+        self._salary_header = StandardLabel(self._payment_info_frame, "Salary", **StandardLabel.header_args)
+        self._salary_header.grid(row=r.SALARY_HEADER, column=0, columnspan=2, **StandardLabel.grid_args)
 
-        self._salary_display = StandardLabel(self._payment_info_frame, "")
-        self._salary_display.grid(row=0, column=1, **StandardLabel.grid_args)
+        self._salary_lbl = StandardLabel(self._payment_info_frame, "Salary")
+        self._salary_lbl.grid(row=r.SALARY, column=c.LBL, **StandardLabel.grid_args)
+
+        self._salary_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._salary_display.grid(row=r.SALARY, column=c.DISPLAY, **StandardLabel.grid_args)
 
         self._pay_freq_lbl = StandardLabel(self._payment_info_frame, "Pay Frequency")
-        self._pay_freq_lbl.grid(row=1, column=0, **StandardLabel.grid_args)
+        self._pay_freq_lbl.grid(row=r.PAY_FREQ, column=c.LBL, **StandardLabel.grid_args)
 
         self._pay_freq_display = StandardLabel(self._payment_info_frame, "")
-        self._pay_freq_display.grid(row=1, column=1, **StandardLabel.grid_args)
+        self._pay_freq_display.grid(row=r.PAY_FREQ, column=c.DISPLAY, **StandardLabel.grid_args)
+
+        # PAYCHECK
+        self._paycheck_header = StandardLabel(self._payment_info_frame, "Paycheck", **StandardLabel.header_args)
+        self._paycheck_header.grid(row=r.PAY_HEADER, column=0, columnspan=2, **StandardLabel.grid_args)
 
         self._gross_paycheck_lbl = StandardLabel(self._payment_info_frame, "Gross Paycheck")
-        self._gross_paycheck_lbl.grid(row=2, column=0, **StandardLabel.grid_args)
+        self._gross_paycheck_lbl.grid(row=r.GROSS, column=c.LBL, **StandardLabel.grid_args)
 
-        self._gross_paycheck_display = StandardLabel(self._payment_info_frame, "")
-        self._gross_paycheck_display.grid(row=2, column=1, **StandardLabel.grid_args)
+        self._gross_paycheck_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._gross_paycheck_display.grid(row=r.GROSS, column=c.DISPLAY, **StandardLabel.grid_args)
+
+        self._net_paycheck_lbl = StandardLabel(self._payment_info_frame, "Net Paycheck")
+        self._net_paycheck_lbl.grid(row=r.NET, column=c.LBL, **StandardLabel.grid_args)
+
+        self._net_paycheck_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._net_paycheck_display.grid(row=r.NET, column=c.DISPLAY, **StandardLabel.grid_args)
+
+        # DEDUCTIONS
+        self._deductions_header = StandardLabel(self._payment_info_frame, "Deductions", **StandardLabel.header_args)
+        self._deductions_header.grid(row=r.DED_HEADER, column=0, columnspan=2, **StandardLabel.grid_args)
+
+        self._pre_tax_deductions_lbl = StandardLabel(self._payment_info_frame, "Pre Tax Deductions")
+        self._pre_tax_deductions_lbl.grid(row=r.PRE_TAX, column=c.LBL, **StandardLabel.grid_args)
+
+        self._pre_tax_deductions_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._pre_tax_deductions_display.grid(row=r.PRE_TAX, column=c.DISPLAY, **StandardLabel.grid_args)
+
+        self._federal_taxes_lbl = StandardLabel(self._payment_info_frame, "Federal Taxes")
+        self._federal_taxes_lbl.grid(row=r.FED_TAX, column=c.LBL, **StandardLabel.grid_args)
+
+        self._federal_taxes_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._federal_taxes_display.grid(row=r.FED_TAX, column=c.DISPLAY, **StandardLabel.grid_args)
+
+        self._fica_taxes_lbl = StandardLabel(self._payment_info_frame, "FICA Taxes")
+        self._fica_taxes_lbl.grid(row=r.FICA_TAX, column=c.LBL, **StandardLabel.grid_args)
+
+        self._fica_taxes_display = StandardLabel(self._payment_info_frame, "", **StandardLabel.decimal_args)
+        self._fica_taxes_display.grid(row=r.FICA_TAX, column=c.DISPLAY, **StandardLabel.grid_args)
 
         # EXPENSE/LEFTOVER DISPLAY
         self._expense_leftover_display_frame = StandardFrame(self)
@@ -83,34 +134,59 @@ class PaymentBreakdownFrame(StandardFrame):
     def update_breakdown(self, payment_dict, expenses_list):
         salary = float(payment_dict[KEY_SALARY])
         pay_frequency = payment_dict[KEY_PAY_FREQUENCY]
+        federal_tax, fica_tax, tax_bracket = calculate_taxes_owed(salary)
         gross_paycheck = 0
+        net_paycheck = 0
         yearly_expenses = 0
         for expense in expenses_list:
             yearly_expenses += expense.get_yearly_value()
-        print(yearly_expenses)
+        pre_tax_per_paycheck = 0
+        federal_tax_per_paycheck = 0
+        fica_tax_per_paycheck = 0
         expenses_per_paycheck = 0
 
         # UPDATE PAYMENT INFO DISPLAY
-        self._salary_display.set(salary)
+        self._salary_display.set_decimal(salary)
         self._pay_freq_display.set(pay_frequency)
 
         # CALCULATE GROSS PAYCHECK AND EXPENSES PER PAYCHECK
         if pay_frequency == PayFrequencies.WEEKLY:
             gross_paycheck = salary / 52
             expenses_per_paycheck = yearly_expenses / 52
+            federal_tax_per_paycheck = federal_tax / 52
+            fica_tax_per_paycheck = fica_tax / 52
         elif pay_frequency == PayFrequencies.BI_WEEKLY:
             gross_paycheck = salary / 26
             expenses_per_paycheck = yearly_expenses / 26
+            federal_tax_per_paycheck = federal_tax / 26
+            fica_tax_per_paycheck = fica_tax / 26
         elif pay_frequency == PayFrequencies.SEMI_MONTHLY:
             gross_paycheck = salary / 24
             expenses_per_paycheck = yearly_expenses / 24
+            federal_tax_per_paycheck = federal_tax / 24
+            fica_tax_per_paycheck = fica_tax / 24
         elif pay_frequency == PayFrequencies.MONTHLY:
             gross_paycheck = salary / 12
             expenses_per_paycheck = yearly_expenses / 12
+            federal_tax_per_paycheck = federal_tax / 12
+            fica_tax_per_paycheck = fica_tax / 12
         self._gross_paycheck_display.set_decimal(gross_paycheck)
 
+        # PRE TAX DEDUCTIONS
+        self._pre_tax_deductions_display.set_decimal(pre_tax_per_paycheck)
+
+        # FEDERAL TAX
+        self._federal_taxes_display.set_decimal(federal_tax_per_paycheck)
+
+        # FICA TAX
+        self._fica_taxes_display.set_decimal(fica_tax_per_paycheck)
+
+        # NET PAYCHECK
+        net_paycheck = gross_paycheck - federal_tax_per_paycheck - fica_tax_per_paycheck  # - pre_tax_deuctions_per_paycheck
+        self._net_paycheck_display.set_decimal(net_paycheck)
+
         # CALCULATE LEFTOVER
-        leftover = gross_paycheck - expenses_per_paycheck
+        leftover = net_paycheck - expenses_per_paycheck
 
         # SET AMOUNTS
         self._expense_amount_display.set_decimal(expenses_per_paycheck)

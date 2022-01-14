@@ -124,6 +124,8 @@ class StandardDropdown(DropdownPlus, AbstractGridWidget):
         'fg': 'black',
         'font': (style.font.style.std, style.font.size.h2),
         'width': STD_WIDTH,
+        'height': 1,
+        'borderwidth': 0,
     }
 
     def __init__(self, root, options_list=None, on_change_func=None):
@@ -159,7 +161,7 @@ class TitleLabel(Label, AbstractGridWidget):
 
 class StandardLabel(Label, AbstractGridWidget):
     grid_args = {
-        'sticky': 'nsew',
+        'sticky': 'ew',
         'pady': grid_style.pad.pady_std,
         'padx': grid_style.pad.padx_std,
     }

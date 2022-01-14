@@ -9,7 +9,7 @@ class ExpenseSummaryFrame(ContentFrame):
         self.grid_rowconfigure(1, weight=0)
 
         # TITLE
-        self._title = TitleLabel(self, text="Account Expense Map")
+        self._title = TitleLabel(self, text="Expense Summary")
         self._title.grid(row=0, column=0, **TitleLabel.grid_args)
 
         # ACTION FRAME

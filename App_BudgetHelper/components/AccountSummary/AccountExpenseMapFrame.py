@@ -12,7 +12,7 @@ class AccountExpenseMapFrame(StandardFrame):
         super().__init__(root)
         self.grid_columnconfigure(0, weight=1)
         self.grid_rowconfigure(0, weight=0)
-        self.grid_rowconfigure(1, weight=0)
+        self.grid_rowconfigure(1, weight=1)
 
         # FUNCTION CALLBACKS
         self.__on_assign_by_name_callback = on_assign_by_name_func
@@ -102,6 +102,7 @@ class AccountExpenseMapFrame(StandardFrame):
 
 
 if __name__ == '__main__':
+    from App_BudgetHelper.components.Expenses.expenses import test_expense
     root = Tk()
     root.grid_columnconfigure(0, weight=1)
     root.grid_rowconfigure(0, weight=1)
