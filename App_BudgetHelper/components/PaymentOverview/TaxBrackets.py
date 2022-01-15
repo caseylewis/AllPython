@@ -1,6 +1,8 @@
 
 
-FICA_RATE = 0.0765
+__MEDICARE_RATE = 0.0145
+__SOCIAL_SECURITY_RATE = 0.062
+FICA_RATE = __MEDICARE_RATE + __SOCIAL_SECURITY_RATE
 
 
 class FederalTaxBracket:
@@ -22,19 +24,23 @@ __tax_bracket_list = [
 ]
 
 
-def calculate_taxes_owed(post_deduction_pay):
-    federal_taxes = 0
-    fica_taxes = post_deduction_pay * FICA_RATE
-    tax_bracket = None
+def calculate_fica_owed(gross_salary):
+    _fica_tax = gross_salary * FICA_RATE
+    return _fica_tax
+
+
+def calculate_federal_taxes_owed(taxable_yearly_salary):
+    _federal_taxes = 0
+    _tax_bracket = None
 
     for bracket in __tax_bracket_list:
-        if bracket.low <= post_deduction_pay <= bracket.high:
-            federal_taxes = ((post_deduction_pay - bracket.low - 1) * (bracket.rate / 100)) + bracket.previous_bracket_sum
-            tax_bracket = bracket
-
-    return federal_taxes, fica_taxes, tax_bracket
+        if bracket.low <= taxable_yearly_salary <= bracket.high:
+            _federal_taxes = ((taxable_yearly_salary - bracket.low - 1) * (bracket.rate / 100)) + bracket.previous_bracket_sum
+            _tax_bracket = bracket
+    return _federal_taxes, _tax_bracket
 
 
 if __name__ == '__main__':
-    _federal_taxes, _fica_tax, _bracket = calculate_taxes_owed(100000)
+    _fica_tax = calculate_fica_owed(110000)
+    _federal_taxes, _bracket = calculate_federal_taxes_owed(89619.44)
     print(_federal_taxes, _fica_tax, _bracket.rate)

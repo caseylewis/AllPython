@@ -2,7 +2,7 @@ from Libs.GuiLib.gui_standards import *
 from App_BudgetHelper.components.PaymentOverview.PaymentEntryFrame import KEY_SALARY, KEY_PAY_FREQUENCY, get_pay_divisor_by_pay_frequency
 from App_BudgetHelper.components.PaymentOverview.PayFrequencies import *
 from App_BudgetHelper.components.Expenses.expenses import *
-from App_BudgetHelper.components.PaymentOverview.TaxBrackets import calculate_taxes_owed, FederalTaxBracket
+from App_BudgetHelper.components.PaymentOverview.TaxBrackets import calculate_federal_taxes_owed, calculate_fica_owed, FederalTaxBracket
 from App_BudgetHelper.components.PreTaxDeductions.pre_tax_deductions import *
 
 
@@ -174,12 +174,16 @@ class PaymentBreakdownFrame(StandardFrame):
 
         gross_paycheck = float(salary / year_divisor)
         post_deduction_paycheck, pre_tax_deductions_per_paycheck = self.__get_total_pre_tax_deductions(gross_paycheck, pre_tax_deductions_list)
-        federal_tax_per_paycheck, fica_tax_per_paycheck, tax_bracket = calculate_taxes_owed(post_deduction_paycheck)
+        fica_tax_per_paycheck = calculate_fica_owed(gross_paycheck)
+        yearly_taxable = (post_deduction_paycheck - fica_tax_per_paycheck) * year_divisor
+        federal_tax_per_year, tax_bracket = calculate_federal_taxes_owed(yearly_taxable)
+        federal_tax_per_paycheck = federal_tax_per_year / year_divisor
+        net_paycheck = post_deduction_paycheck - federal_tax_per_paycheck - fica_tax_per_paycheck
 
+        # CALCULATE YEARLY EXPENSES TO DIVIDE BY YEAR DIVISOR
         yearly_expenses = 0
         for expense in expenses_list:
             yearly_expenses += expense.get_yearly_value()
-
         expenses_per_paycheck = yearly_expenses / year_divisor
 
         # UPDATE PAYMENT INFO DISPLAY
@@ -190,7 +194,6 @@ class PaymentBreakdownFrame(StandardFrame):
         self._gross_paycheck_display.set_decimal(gross_paycheck)
 
         # NET PAYCHECK
-        net_paycheck = post_deduction_paycheck - federal_tax_per_paycheck - fica_tax_per_paycheck
         self._net_paycheck_display.set_decimal(net_paycheck)
 
         # PRE TAX DEDUCTIONS
