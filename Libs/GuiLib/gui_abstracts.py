@@ -63,7 +63,7 @@ class AbstractEditFrame(StandardFrame):
         # INPUT LABELS
         # style_lbl_input = copy_dict(style_lbl)
         # style_lbl_input['anchor'] = E
-        for key, idx in zip(self.object_type.keys.all_keys, self.object_type.idxs.all_indices):
+        for key, idx in zip(self.object_type.keys.required_keys, self.object_type.idxs.all_indices):
             lbl = StandardLabel(self._input_frame, text=key)
             lbl.grid(row=idx, column=0, **StandardLabel.grid_args)
 
@@ -248,8 +248,8 @@ class AbstractObjectFrame(ContentFrame):
 
 
 if __name__ == '__main__':
-    from App_BudgetHelper.Accounts.AccountForm import AccountForm
-    from App_BudgetHelper.Accounts.AccountCard import AccountCard
+    from App_BudgetHelper.components.Accounts.AccountForm import AccountForm
+    from App_BudgetHelper.components.Accounts.AccountCard import AccountCard
 
     class AccountFrame(AbstractObjectFrame):
         def __init__(self, root, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):

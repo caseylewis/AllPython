@@ -6,6 +6,20 @@ KEY_SALARY = 'salary'
 KEY_PAY_FREQUENCY = 'pay_frequency'
 
 
+def get_pay_divisor_by_pay_frequency(pay_frequency):
+    if pay_frequency == PayFrequencies.WEEKLY:
+        year_divisor = 52
+    elif pay_frequency == PayFrequencies.BI_WEEKLY:
+        year_divisor = 26
+    elif pay_frequency == PayFrequencies.SEMI_MONTHLY:
+        year_divisor = 24
+    elif pay_frequency == PayFrequencies.MONTHLY:
+        year_divisor = 12
+    else:
+        year_divisor = None
+    return year_divisor
+
+
 class PaymentEntryFrame(StandardFrame):
     class _rows:
         SALARY = 1

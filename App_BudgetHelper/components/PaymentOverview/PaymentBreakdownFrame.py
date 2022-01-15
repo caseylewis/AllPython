@@ -1,8 +1,9 @@
 from Libs.GuiLib.gui_standards import *
-from App_BudgetHelper.components.PaymentOverview.PaymentEntryFrame import KEY_SALARY, KEY_PAY_FREQUENCY
+from App_BudgetHelper.components.PaymentOverview.PaymentEntryFrame import KEY_SALARY, KEY_PAY_FREQUENCY, get_pay_divisor_by_pay_frequency
 from App_BudgetHelper.components.PaymentOverview.PayFrequencies import *
 from App_BudgetHelper.components.Expenses.expenses import *
 from App_BudgetHelper.components.PaymentOverview.TaxBrackets import calculate_taxes_owed, FederalTaxBracket
+from App_BudgetHelper.components.PreTaxDeductions.pre_tax_deductions import *
 
 
 class PaymentBreakdownFrame(StandardFrame):
@@ -131,59 +132,75 @@ class PaymentBreakdownFrame(StandardFrame):
         self._leftover_percent_display = StandardLabel(self._expense_leftover_display_frame, "", **StandardLabel.decimal_args)
         self._leftover_percent_display.grid(row=2, column=2, **StandardLabel.grid_args)
 
-    def update_breakdown(self, payment_dict, expenses_list):
+    @staticmethod
+    def __get_total_pre_tax_deductions(gross_pay, pre_tax_deductions_list):
+        total_deductions = 0
+        post_deduction_pay = gross_pay
+        highest_priority = 0
+
+        # MAKE A SPARE LIST TO MUTATE
+        temp_deductions_list = []
+        for deduction in pre_tax_deductions_list:
+            temp_deductions_list.append(deduction)
+
+        # GET HIGHEST PRIORITY FOR RANGE
+        for deduction in pre_tax_deductions_list:
+            if int(deduction.priority) > highest_priority:
+                highest_priority = int(deduction.priority)
+        # ITERATE THROUGH PRIORITIES
+        for priority in range(highest_priority+1):
+            for deduction in temp_deductions_list:
+                deduction_priority = int(deduction.priority)
+                deduction_value = float(deduction.value)
+                if deduction_priority == priority:
+                    # PERCENTAGE
+                    if deduction.type == PreTaxDeductionTypes.PERCENTAGE:
+                        deduction_value = float(deduction_value / 100) * post_deduction_pay
+                    # FIXED
+                    elif deduction.type == PreTaxDeductionTypes.FIXED:
+                        deduction_value = deduction_value
+                    # SUBTRACT POST DEDUCTION PAY AND REMOVE DEDUCTION FROM LIST
+                    post_deduction_pay -= deduction_value
+                    total_deductions += deduction_value
+                    temp_deductions_list.remove(deduction)
+
+        return post_deduction_pay, total_deductions
+
+    def update_breakdown(self, payment_dict, expenses_list, pre_tax_deductions_list):
         salary = float(payment_dict[KEY_SALARY])
         pay_frequency = payment_dict[KEY_PAY_FREQUENCY]
-        federal_tax, fica_tax, tax_bracket = calculate_taxes_owed(salary)
-        gross_paycheck = 0
-        net_paycheck = 0
+        # GET YEAR DIVISOR BASED ON PAY FREQUENCY
+        year_divisor = get_pay_divisor_by_pay_frequency(pay_frequency)
+
+        gross_paycheck = float(salary / year_divisor)
+        post_deduction_paycheck, pre_tax_deductions_per_paycheck = self.__get_total_pre_tax_deductions(gross_paycheck, pre_tax_deductions_list)
+        federal_tax_per_paycheck, fica_tax_per_paycheck, tax_bracket = calculate_taxes_owed(post_deduction_paycheck)
+
         yearly_expenses = 0
         for expense in expenses_list:
             yearly_expenses += expense.get_yearly_value()
-        pre_tax_per_paycheck = 0
-        federal_tax_per_paycheck = 0
-        fica_tax_per_paycheck = 0
+
         expenses_per_paycheck = 0
 
         # UPDATE PAYMENT INFO DISPLAY
         self._salary_display.set_decimal(salary)
         self._pay_freq_display.set(pay_frequency)
 
-        # CALCULATE GROSS PAYCHECK AND EXPENSES PER PAYCHECK
-        if pay_frequency == PayFrequencies.WEEKLY:
-            gross_paycheck = salary / 52
-            expenses_per_paycheck = yearly_expenses / 52
-            federal_tax_per_paycheck = federal_tax / 52
-            fica_tax_per_paycheck = fica_tax / 52
-        elif pay_frequency == PayFrequencies.BI_WEEKLY:
-            gross_paycheck = salary / 26
-            expenses_per_paycheck = yearly_expenses / 26
-            federal_tax_per_paycheck = federal_tax / 26
-            fica_tax_per_paycheck = fica_tax / 26
-        elif pay_frequency == PayFrequencies.SEMI_MONTHLY:
-            gross_paycheck = salary / 24
-            expenses_per_paycheck = yearly_expenses / 24
-            federal_tax_per_paycheck = federal_tax / 24
-            fica_tax_per_paycheck = fica_tax / 24
-        elif pay_frequency == PayFrequencies.MONTHLY:
-            gross_paycheck = salary / 12
-            expenses_per_paycheck = yearly_expenses / 12
-            federal_tax_per_paycheck = federal_tax / 12
-            fica_tax_per_paycheck = fica_tax / 12
+        # GROSS PAYCHECK
         self._gross_paycheck_display.set_decimal(gross_paycheck)
 
+        # NET PAYCHECK
+        net_paycheck = post_deduction_paycheck - federal_tax_per_paycheck - fica_tax_per_paycheck
+        self._net_paycheck_display.set_decimal(net_paycheck)
+
         # PRE TAX DEDUCTIONS
-        self._pre_tax_deductions_display.set_decimal(pre_tax_per_paycheck)
+        self._pre_tax_deductions_display.set_decimal(pre_tax_deductions_per_paycheck)
 
         # FEDERAL TAX
         self._federal_taxes_display.set_decimal(federal_tax_per_paycheck)
 
         # FICA TAX
         self._fica_taxes_display.set_decimal(fica_tax_per_paycheck)
-
-        # NET PAYCHECK
-        net_paycheck = gross_paycheck - federal_tax_per_paycheck - fica_tax_per_paycheck  # - pre_tax_deuctions_per_paycheck
-        self._net_paycheck_display.set_decimal(net_paycheck)
 
         # CALCULATE LEFTOVER
         leftover = net_paycheck - expenses_per_paycheck
@@ -217,6 +234,6 @@ if __name__ == '__main__':
 
     frame = PaymentBreakdownFrame(root)
     frame.grid(row=0, column=0, sticky=grid_style.sticky.all)
-    frame.update_breakdown(payment_dict, test_expense_list)
+    frame.update_breakdown(payment_dict, test_expense_list, test_pre_tax_deduction_list)
 
     root.mainloop()

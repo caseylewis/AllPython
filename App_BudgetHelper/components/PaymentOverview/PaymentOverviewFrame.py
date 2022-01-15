@@ -16,8 +16,8 @@ class PaymentOverviewFrame(ContentFrame):
         self._payment_breakdown_frame = PaymentBreakdownFrame(self)
         self._payment_breakdown_frame.grid(row=2, column=0, sticky=grid_style.sticky.all)
 
-    def update_payment_overview(self, payment_dict, expenses_list):
-        self._payment_breakdown_frame.update_breakdown(payment_dict, expenses_list)
+    def update_payment_overview(self, payment_dict, expenses_list, pre_tax_deductions_list):
+        self._payment_breakdown_frame.update_breakdown(payment_dict, expenses_list, pre_tax_deductions_list)
 
 
 if __name__ == '__main__':

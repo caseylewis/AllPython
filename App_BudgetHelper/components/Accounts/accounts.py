@@ -18,6 +18,7 @@ class AccountKeys(AbstractKeys):
         NAME,
         ACC_NUM,
         ROUT_NUM,
+        DESC,
     ]
 
     def __init__(self):
@@ -97,7 +98,7 @@ __test_account_dict = {
     Account.keys.NAME: 'test',
     Account.keys.ACC_NUM: '2121243321',
     Account.keys.ROUT_NUM: '23423432',
-    # Account.keys.DESC: 'Test Description',
+    Account.keys.DESC: 'Test Description',
 }
 
 test_account = Account(**__test_account_dict)

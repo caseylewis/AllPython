@@ -22,14 +22,14 @@ __tax_bracket_list = [
 ]
 
 
-def calculate_taxes_owed(gross_salary):
+def calculate_taxes_owed(post_deduction_pay):
     federal_taxes = 0
-    fica_taxes = gross_salary * FICA_RATE
+    fica_taxes = post_deduction_pay * FICA_RATE
     tax_bracket = None
 
     for bracket in __tax_bracket_list:
-        if bracket.low <= gross_salary <= bracket.high:
-            federal_taxes = ((gross_salary - bracket.low - 1) * (bracket.rate / 100)) + bracket.previous_bracket_sum
+        if bracket.low <= post_deduction_pay <= bracket.high:
+            federal_taxes = ((post_deduction_pay - bracket.low - 1) * (bracket.rate / 100)) + bracket.previous_bracket_sum
             tax_bracket = bracket
 
     return federal_taxes, fica_taxes, tax_bracket
