@@ -180,7 +180,7 @@ class PaymentBreakdownFrame(StandardFrame):
         for expense in expenses_list:
             yearly_expenses += expense.get_yearly_value()
 
-        expenses_per_paycheck = 0
+        expenses_per_paycheck = yearly_expenses / year_divisor
 
         # UPDATE PAYMENT INFO DISPLAY
         self._salary_display.set_decimal(salary)
