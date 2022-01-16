@@ -3,6 +3,7 @@ from Libs.GuiLib.gui_functions import *
 from App_3500ParkingLogin.data_types.users import *
 from datetime import timedelta, datetime
 from App_3500ParkingLogin.data_types.parking_sessions import *
+from App_3500ParkingLogin.config import *
 
 
 class Register2ParkSubFrame(StandardFrame):
@@ -44,20 +45,20 @@ class Register2ParkSubFrame(StandardFrame):
         self.extended_stay_btn.grid(row=7, column=0, **StandardButton.grid_args)
 
         # ENTRIES COLUMN
-        self.register_apt_number_display = StandardLabel(self, text=self._config_data_dict['apartment_number'])
+        self.register_apt_number_display = StandardLabel(self, text=self._config_data_dict[KEY_APARTMENT_NUMBER])
         self.register_apt_number_display.grid(row=1, column=1, **StandardLabel.grid_args)
 
-        self._register_apt_desc_display = StandardLabel(self, text=self._config_data_dict['apartment_description'])
+        self._register_apt_desc_display = StandardLabel(self, text=self._config_data_dict[KEY_APARTMENT_DESCRIPTION])
         self._register_apt_desc_display.grid(row=2, column=1, **StandardLabel.grid_args)
 
         self._register_make_var = StringVar()
         self._register_make_var.trace('w', lambda event, x, y: first_to_upper(self._register_make_var))
-        self._register_make_entry = Entry(self, textvariable=self._register_make_var)
+        self._register_make_entry = Entry(self, textvariable=self._register_make_var, **StandardEntry.style_args)
         self._register_make_entry.grid(row=3, column=1, **StandardLabel.grid_args)
 
         self._register_model_var = StringVar()
         self._register_model_var.trace('w', lambda event, x, y: first_to_upper(self._register_model_var))
-        self._register_model_entry = Entry(self, textvariable=self._register_model_var)
+        self._register_model_entry = Entry(self, textvariable=self._register_model_var, **StandardEntry.style_args)
         self._register_model_entry.grid(row=4, column=1, **StandardLabel.grid_args)
 
         self._register_license_number_var = StringVar()

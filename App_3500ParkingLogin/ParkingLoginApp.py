@@ -11,6 +11,7 @@ from Libs.DataLib.json_helper import *
 from Libs.GuiLib.gui_majors import *
 from Libs.GuiLib.gui_functions import *
 from Libs.OSLib.chromedriver_helper import *
+from App_3500ParkingLogin.config import *
 
 
 class ParkingLoginApp(NavigableTkFrame):
@@ -32,17 +33,13 @@ class ParkingLoginApp(NavigableTkFrame):
     def __init__(self, root):
         super().__init__(root)
         self.config(bg='black')
-        self.set_nav_btn_style(**{
-            'bg': 'green',
-            'fg': 'white',
-            'font': (style.font.style.std, style.font.size.h1),
-        })
+        self.set_nav_btn_style(**style_navbtn)
+        self.master.title("3500 Parking Login")
         self.master.protocol('WM_DELETE_WINDOW', lambda: self.__handle_window_close())
 
         # DATA OBJECTS
-        # self._user_list = test_user_list
         self._user_list = []
-        self._config_data = {"apartment_number": "621", "apartment_description": "3500 Westlake"}
+        self._config_data = {KEY_APARTMENT_NUMBER: "621", KEY_APARTMENT_DESCRIPTION: "3500 Westlake"}
         # self._config_data = {}
 
         # IMPORT DATA - MUST BE BEFORE SETTING UP FRAMES
@@ -84,6 +81,7 @@ class ParkingLoginApp(NavigableTkFrame):
                 model=session.reg_dict[User.keys.MODEL],
                 license_plate=session.reg_dict[User.keys.LICENSE_PLATE],
                 email=session.reg_dict[User.keys.EMAIL],
+                apartment_number=self._config_data[KEY_APARTMENT_NUMBER],
             )
         except Exception as e:
             messagebox.showerror("Register Error", str(e))
