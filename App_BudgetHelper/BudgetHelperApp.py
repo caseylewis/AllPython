@@ -6,6 +6,7 @@ from App_BudgetHelper.components.ExpenseSummary.ExpenseSummaryFrame import *
 from App_BudgetHelper.components.Expenses.ExpenseFrame import *
 from App_BudgetHelper.components.PaymentOverview.PaymentOverviewFrame import *
 from App_BudgetHelper.components.PreTaxDeductions.PreTaxDeductionFrame import *
+from App_BudgetHelper.components.Savings.SavingFrame import *
 from Libs.DataLib.json_helper import *
 from Libs.GuiLib.gui_majors import *
 from Libs.GuiLib.gui_styles import *
@@ -17,6 +18,7 @@ class BudgetHelper(NavigableTkFrame):
     # JSON DATA
     accounts_json = JsonManager(os.path.join(app_data.data_dir, 'accounts.json'))
     expenses_json = JsonManager(os.path.join(app_data.data_dir, 'expenses.json'))
+    savings_json = JsonManager(os.path.join(app_data.data_dir, 'savings.json'))
     pre_tax_deductions_json = JsonManager(os.path.join(app_data.data_dir, 'pre_tax_deductions.json'))
     # YAML DATA
     payment_info_yaml = os.path.join(app_data.data_dir, 'payment_info.yml')
@@ -49,6 +51,10 @@ class BudgetHelper(NavigableTkFrame):
         self._expenses_list = []
         self.__import_expense_data()
 
+        # DEFINE SAVING VARIABLES
+        self._savings_list = []
+        self.__import_saving_data()
+
         # DEFINE PRE TAX DEDUCTION VARIABLES
         self._pre_tax_deductions_list = []
         self.__import_pre_tax_deduction_data()
@@ -72,6 +78,13 @@ class BudgetHelper(NavigableTkFrame):
                                             on_edit_by_name_func=self.__edit_expense_by_name,
                                             on_delete_by_name_func=self.__delete_expense_by_name)
         self.add_content_frame(self._frame_idxs.EXPENSE, self._expenses_frame)
+        # SAVINGS
+        self._savings_frame = SavingFrame(self.content_frame,
+                                          on_add_func=self.__add_saving,
+                                          on_update_func=self.__update_saving,
+                                          on_edit_by_name_func=self.__edit_saving_by_name,
+                                          on_delete_by_name_func=self.__delete_saving_by_name)
+        self.add_content_frame(self._frame_idxs.SAVING, self._savings_frame)
         # PRE TAX DEDUCTIONS
         self._pre_tax_deductions_frame = PreTaxDeductionFrame(self.content_frame,
                                                               on_add_func=self.__add_pre_tax_deduction,
@@ -96,10 +109,11 @@ class BudgetHelper(NavigableTkFrame):
         # PUT DATA IN FRAMES
         self._accounts_frame.populate_objects(self._accounts_list)
         self._expenses_frame.populate_objects(self._expenses_list)
+        self._savings_frame.populate_objects(self._savings_list)
         self._pre_tax_deductions_frame.populate_objects(self._pre_tax_deductions_list)
         self._account_summary_frame.populate_objects(self._accounts_list, self._expenses_list)
         self._expense_summary_frame.update_expense_summary(self._expenses_list)
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
 
         self.show_frame(self._frame_idxs.ACCOUNT)
 
@@ -110,6 +124,7 @@ class BudgetHelper(NavigableTkFrame):
     def __save_all_data(self):
         self.accounts_json.export_data(self._accounts_list)
         self.expenses_json.export_data(self._expenses_list)
+        self.savings_json.export_data(self._savings_list)
         self.pre_tax_deductions_json.export_data(self._pre_tax_deductions_list)
         self.__export_payment_data()
 
@@ -180,6 +195,9 @@ class BudgetHelper(NavigableTkFrame):
     def __import_expense_data(self):
         self.__data_import_simple_object(self.expenses_json, Expense, self._expenses_list)
 
+    def __import_saving_data(self):
+        self.__data_import_simple_object(self.savings_json, Saving, self._savings_list)
+
     def __import_pre_tax_deduction_data(self):
         self.__data_import_simple_object(self.pre_tax_deductions_json, PreTaxDeduction, self._pre_tax_deductions_list)
 
@@ -225,7 +243,16 @@ class BudgetHelper(NavigableTkFrame):
         self._expense_summary_frame.update_expense_summary(self._expenses_list)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list)
+        self.__update_payment_overview()
+
+    def __add_saving(self, saving):
+        # DATA ADD
+        self.__data_add_object(saving, Saving, self._savings_list)
+        # GUI SIMPLE ADD
+        self.__gui_add_simple_object(saving, self._savings_frame)
+
+        # PAYMENT OVERVIEW FRAME
+        self.__update_payment_overview()
 
     def __add_pre_tax_deduction(self, pre_tax_deduction):
         # DATA ADD
@@ -234,7 +261,7 @@ class BudgetHelper(NavigableTkFrame):
         self.__gui_add_simple_object(pre_tax_deduction, self._pre_tax_deductions_frame)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
 
     # UPDATE
     def __update_account(self, new_account):
@@ -262,7 +289,16 @@ class BudgetHelper(NavigableTkFrame):
         self._expense_summary_frame.update_expense_summary(self._expenses_list)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
+
+    def __update_saving(self, new_saving):
+        # DATA UPDATE
+        self.__data_update_object(self._savings_list, new_saving)
+        # GUI UPDATE OBJECT
+        self.__gui_update_simple_object(new_saving, self._savings_frame)
+
+        # PAYMENT OVERVIEW FRAME
+        self.__update_payment_overview()
 
     def __update_pre_tax_deduction(self, new_pre_tax_deduction):
         # DATA UPDATE
@@ -271,7 +307,7 @@ class BudgetHelper(NavigableTkFrame):
         self.__gui_update_simple_object(new_pre_tax_deduction, self._pre_tax_deductions_frame)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
 
     # EDIT
     def __edit_account_by_name(self, account_name):
@@ -281,6 +317,10 @@ class BudgetHelper(NavigableTkFrame):
     def __edit_expense_by_name(self, expense_name):
         # GUI EDIT
         self.__gui_edit_object_by_name(self._expenses_list, expense_name, self._expenses_frame)
+
+    def __edit_saving_by_name(self, saving_name):
+        # GUI EDIT
+        self.__gui_edit_object_by_name(self._savings_list, saving_name, self._savings_frame)
 
     def __edit_deduction_by_name(self, deduction_name):
         # GUI EDIT
@@ -323,7 +363,16 @@ class BudgetHelper(NavigableTkFrame):
         self._expense_summary_frame.update_expense_summary(self._expenses_list)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
+
+    def __delete_saving_by_name(self, saving_name):
+        # DATA DELETE
+        self.__data_delete_object_by_name(self._savings_list, saving_name)
+        # GUI DELETE OBJECT
+        self.__gui_delete_object_by_name(saving_name, self._savings_frame)
+
+        # PAYMENT OVERVIEW FRAME
+        self.__update_payment_overview()
 
     def __delete_deduction_by_name(self, deduction_name):
         # DATA DELETE
@@ -332,7 +381,7 @@ class BudgetHelper(NavigableTkFrame):
         self.__gui_delete_object_by_name(deduction_name, self._expenses_frame)
 
         # PAYMENT OVERVIEW FRAME
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
 
     ####################################################################################################################
     # ACCOUNT SUMMARY RELATED FUNCTIONS
@@ -380,10 +429,13 @@ class BudgetHelper(NavigableTkFrame):
     # EXPENSE SUMMARY RELATED FUNCTIONS
 
     ####################################################################################################################
+    def __update_payment_overview(self):
+        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list, self._savings_list)
+
     # PAYMENT OVERVIEW RELATED FUNCTIONS
     def __payment_info_changed(self, payment_dict):
         self._payment_dict = payment_dict
-        self._payment_overview_frame.update_payment_overview(self._payment_dict, self._expenses_list, self._pre_tax_deductions_list)
+        self.__update_payment_overview()
 
 
 if __name__ == '__main__':
