@@ -9,15 +9,22 @@ from Libs.GuiLib.gui_standards import *
 
 
 class PaymentBreakdownFrame(StandardFrame):
-    def __init__(self, root):
+    def __init__(self, root, hide_scrollbars=True):
         super().__init__(root)
         self.grid_columnconfigure(0, weight=1)
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_columnconfigure(2, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
 
         # TITLE
         self._title = TitleLabel(self, "Pay Breakdown")
         self._title.grid(row=0, column=0, columnspan=3, **TitleLabel.grid_args)
+
+        # SCROLLFRAME
+        self._content_scrollframe = ScrollFramePlus(self, hide_scrollbar=hide_scrollbars, bg=FRAME_BG_STANDARD)
+        self._content_scrollframe.grid(row=1, column=0, columnspan=3, sticky='nsew', pady=0, padx=0)
+        self._content_scrollframe.view_port.grid_columnconfigure(0, weight=1)
+        self._content_scrollframe.view_port.grid_columnconfigure(1, weight=1)
+        self._content_scrollframe.view_port.grid_columnconfigure(2, weight=1)
 
         # PAYMENT INFO DISPLAY
         class cols:
@@ -39,7 +46,7 @@ class PaymentBreakdownFrame(StandardFrame):
         c = cols()
         r = rows()
 
-        self._payment_info_frame = StandardFrame(self)
+        self._payment_info_frame = StandardFrame(self._content_scrollframe.view_port)
         self._payment_info_frame.grid(row=1, column=1, **StandardFrame.grid_args)
         self._payment_info_frame.grid_columnconfigure(0, weight=1)
         self._payment_info_frame.grid_columnconfigure(1, weight=1)
@@ -103,7 +110,7 @@ class PaymentBreakdownFrame(StandardFrame):
         # self._tax_disclaimer.grid(row=r.DISCLAIMER, column=0, columnspan=2, **StandardLabel.grid_args)
 
         # EXPENSE/LEFTOVER DISPLAY
-        self._expense_leftover_display_frame = StandardFrame(self)
+        self._expense_leftover_display_frame = StandardFrame(self._content_scrollframe.view_port)
         self._expense_leftover_display_frame.grid(row=2, column=0, columnspan=3, **StandardFrame.grid_args)
         self._expense_leftover_display_frame.grid_columnconfigure(0, weight=0)
         self._expense_leftover_display_frame.grid_columnconfigure(1, weight=1)

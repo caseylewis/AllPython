@@ -114,6 +114,7 @@ class BudgetHelper(NavigableTkFrame):
         self.add_content_frame(self._frame_idxs.EXPENSE_SUMMARY, self._expense_summary_frame)
         # PAYMENT OVERVIEW
         self._payment_overview_frame = PaymentOverviewFrame(self.content_frame, self._payment_dict,
+                                                            hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                                             on_payment_info_changed_func=self.__payment_info_changed)
         self.add_content_frame(self._frame_idxs.PAYMENT_OVERVIEW, self._payment_overview_frame)
 

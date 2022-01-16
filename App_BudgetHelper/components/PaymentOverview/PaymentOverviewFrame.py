@@ -4,17 +4,19 @@ from App_BudgetHelper.components.PaymentOverview.PaymentBreakdownFrame import *
 
 
 class PaymentOverviewFrame(ContentFrame):
-    def __init__(self, root, payment_dict, on_payment_info_changed_func=None):
+    def __init__(self, root, payment_dict, hide_scrollbars=True, on_payment_info_changed_func=None):
         super().__init__(root, "Payment Overview")
         self.grid_columnconfigure(0, weight=1)
+        self.grid_rowconfigure(0, weight=0)
+        self.grid_rowconfigure(1, weight=1)
 
         # PAYMENT ENTRY FRAME
         self._payment_entry_frame = PaymentEntryFrame(self, payment_dict, on_submit_func=on_payment_info_changed_func)
-        self._payment_entry_frame.grid(row=1, column=0, sticky=grid_style.sticky.all)
+        self._payment_entry_frame.grid(row=0, column=0, sticky=grid_style.sticky.all)
 
         # PAYMENT BREAKDOWN FRAME
-        self._payment_breakdown_frame = PaymentBreakdownFrame(self)
-        self._payment_breakdown_frame.grid(row=2, column=0, sticky=grid_style.sticky.all)
+        self._payment_breakdown_frame = PaymentBreakdownFrame(self, hide_scrollbars=hide_scrollbars)
+        self._payment_breakdown_frame.grid(row=1, column=0, sticky=grid_style.sticky.all)
 
     def update_payment_overview(self, payment_dict, expenses_list, pre_tax_deductions_list, savings_list):
         self._payment_breakdown_frame.update_breakdown(payment_dict, expenses_list, pre_tax_deductions_list, savings_list)
