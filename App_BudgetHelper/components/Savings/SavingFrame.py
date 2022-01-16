@@ -4,8 +4,9 @@ from Libs.GuiLib.gui_abstracts import *
 
 
 class SavingFrame(AbstractObjectFrame):
-    def __init__(self, root, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
+    def __init__(self, root, hide_scrollbars, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
         super().__init__(root, "Savings", SavingForm, SavingCard,
+                         hide_scrollbars=hide_scrollbars,
                          on_add_func=on_add_func,
                          on_update_func=on_update_func,
                          on_delete_by_name_func=on_delete_by_name_func,

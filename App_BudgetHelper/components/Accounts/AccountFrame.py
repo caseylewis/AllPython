@@ -1,15 +1,17 @@
-from Libs.GuiLib.gui_abstracts import *
-from App_BudgetHelper.components.Accounts.AccountForm import *
 from App_BudgetHelper.components.Accounts.AccountCard import *
+from App_BudgetHelper.components.Accounts.AccountForm import *
+from Libs.GuiLib.gui_abstracts import *
 
 
 class AccountFrame(AbstractObjectFrame):
-    def __init__(self, root, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
+    def __init__(self, root, hide_scrollbars, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
         super().__init__(root, "Accounts", AccountForm, AccountCard,
+                         hide_scrollbars=hide_scrollbars,
                          on_add_func=on_add_func,
                          on_update_func=on_update_func,
                          on_delete_by_name_func=on_delete_by_name_func,
                          on_edit_by_name_func=on_edit_by_name_func)
+        print('accountframe hide scrollbars', hide_scrollbars)
 
 
 # class AccountFrame(ContentFrame):

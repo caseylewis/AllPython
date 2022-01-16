@@ -7,6 +7,7 @@ from App_BudgetHelper.components.Expenses.ExpenseFrame import *
 from App_BudgetHelper.components.PaymentOverview.PaymentOverviewFrame import *
 from App_BudgetHelper.components.PreTaxDeductions.PreTaxDeductionFrame import *
 from App_BudgetHelper.components.Savings.SavingFrame import *
+from App_BudgetHelper.config import *
 from Libs.DataLib.json_helper import *
 from Libs.GuiLib.gui_majors import *
 from Libs.GuiLib.gui_styles import *
@@ -21,6 +22,7 @@ class BudgetHelper(NavigableTkFrame):
     savings_json = JsonManager(os.path.join(app_data.data_dir, 'savings.json'))
     pre_tax_deductions_json = JsonManager(os.path.join(app_data.data_dir, 'pre_tax_deductions.json'))
     # YAML DATA
+    config_yaml = os.path.join(app_data.data_dir, 'config.yml')
     payment_info_yaml = os.path.join(app_data.data_dir, 'payment_info.yml')
 
     class ContentFrameIndices:
@@ -42,6 +44,10 @@ class BudgetHelper(NavigableTkFrame):
         self.master.protocol("WM_DELETE_WINDOW", lambda: self.__handle_close())
         self.config(bg='black')
         self.set_nav_btn_style(**style_navbtn)
+
+        # DEFINE CONFIG VARIABLES
+        self._config_dict = {}
+        self.__import_config_data()
 
         # DEFINE ACCOUNT VARIABLES
         self._accounts_list = []
@@ -66,6 +72,7 @@ class BudgetHelper(NavigableTkFrame):
         # CONTENT FRAMES
         # ACCOUNTS
         self._accounts_frame = AccountFrame(self.content_frame,
+                                            hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                             on_add_func=self.__add_account,
                                             on_update_func=self.__update_account,
                                             on_edit_by_name_func=self.__edit_account_by_name,
@@ -73,6 +80,7 @@ class BudgetHelper(NavigableTkFrame):
         self.add_content_frame(self._frame_idxs.ACCOUNT, self._accounts_frame)
         # EXPENSES
         self._expenses_frame = ExpenseFrame(self.content_frame,
+                                            hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                             on_add_func=self.__add_expense,
                                             on_update_func=self.__update_expense,
                                             on_edit_by_name_func=self.__edit_expense_by_name,
@@ -80,6 +88,7 @@ class BudgetHelper(NavigableTkFrame):
         self.add_content_frame(self._frame_idxs.EXPENSE, self._expenses_frame)
         # SAVINGS
         self._savings_frame = SavingFrame(self.content_frame,
+                                          hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                           on_add_func=self.__add_saving,
                                           on_update_func=self.__update_saving,
                                           on_edit_by_name_func=self.__edit_saving_by_name,
@@ -87,6 +96,7 @@ class BudgetHelper(NavigableTkFrame):
         self.add_content_frame(self._frame_idxs.SAVING, self._savings_frame)
         # PRE TAX DEDUCTIONS
         self._pre_tax_deductions_frame = PreTaxDeductionFrame(self.content_frame,
+                                                              hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                                               on_add_func=self.__add_pre_tax_deduction,
                                                               on_update_func=self.__update_pre_tax_deduction,
                                                               on_edit_by_name_func=self.__edit_deduction_by_name,
@@ -94,6 +104,7 @@ class BudgetHelper(NavigableTkFrame):
         self.add_content_frame(self._frame_idxs.PRE_TAX_DEDUCTION, self._pre_tax_deductions_frame)
         # ACCOUNT SUMMARY
         self._account_summary_frame = AccountSummaryFrame(self.content_frame,
+                                                          hide_scrollbars=self._config_dict[KEY_HIDE_SCROLLBARS],
                                                           on_assign_by_name_func=self.__assign_to_account,
                                                           on_unassign_by_name_func=self.__unassign_from_account,
                                                           on_account_name_changed_func=self.__account_changed)
@@ -122,6 +133,7 @@ class BudgetHelper(NavigableTkFrame):
         self.master.destroy()
 
     def __save_all_data(self):
+        self.__export_config_data()
         self.accounts_json.export_data(self._accounts_list)
         self.expenses_json.export_data(self._expenses_list)
         self.savings_json.export_data(self._savings_list)
@@ -201,10 +213,24 @@ class BudgetHelper(NavigableTkFrame):
     def __import_pre_tax_deduction_data(self):
         self.__data_import_simple_object(self.pre_tax_deductions_json, PreTaxDeduction, self._pre_tax_deductions_list)
 
+    def __import_config_data(self):
+        # ENSURE FILE EXISTS
+        file_create(self.config_yaml)
+        # IMPORT FROM CONFIG YAML
+        with open(self.config_yaml, 'r') as file:
+            config_dict = yaml.safe_load(file)
+            file.close()
+
+        if config_dict is not None:
+            self._config_dict = config_dict
+            print(self._config_dict)
+        else:
+            self._config_dict[KEY_HIDE_SCROLLBARS] = True
+
     def __import_payment_data(self):
         # ENSURE FILE EXISTS
         file_create(self.payment_info_yaml)
-        # IMPORT FROM CONFIG YAML
+        # IMPORT FROM PAYMENT INFO YAML
         with open(self.payment_info_yaml, 'r') as file:
             payment_dict = yaml.safe_load(file)
             file.close()
@@ -216,6 +242,10 @@ class BudgetHelper(NavigableTkFrame):
             self._payment_dict[KEY_PAY_FREQUENCY] = PayFrequencies.SEMI_MONTHLY
 
     # EXPORTS
+    def __export_config_data(self):
+        with open(self.config_yaml, 'w') as file:
+            yaml.dump(self._config_dict, file)
+
     def __export_payment_data(self):
         with open(self.payment_info_yaml, 'w') as file:
             yaml.dump(self._payment_dict, file)

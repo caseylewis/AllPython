@@ -6,6 +6,7 @@ class AccountExpenseMapFrame(StandardFrame):
     default_account_option = "Select Account"
 
     def __init__(self, root,
+                 hide_scrollbars=True,
                  on_assign_by_name_func=None,
                  on_unassign_by_name_func=None,
                  on_account_name_changed_func=None):
@@ -37,7 +38,7 @@ class AccountExpenseMapFrame(StandardFrame):
         self._account_dropdown.grid(row=0, column=0, **StandardDropdown.grid_args)
 
         # ACCOUNT EXPENSE SCROLLFRAME
-        self._account_expense_scrollframe = CardScrollFramePlus(self._action_frame, hide_scroll_bar=True)
+        self._account_expense_scrollframe = CardScrollFramePlus(self._action_frame, hide_scrollbar=hide_scrollbars)
         self._account_expense_scrollframe.grid(row=1, column=0, sticky=grid_style.sticky.all)
 
         # AVAILABLE EXPENSE LABEL
@@ -45,7 +46,7 @@ class AccountExpenseMapFrame(StandardFrame):
         self._available_expense_lbl.grid(row=0, column=1, **StandardLabel.grid_args)
 
         # AVAILABLE EXPENSE SCROLLFRAME
-        self._available_expense_scrollframe = CardScrollFramePlus(self._action_frame, hide_scroll_bar=True)
+        self._available_expense_scrollframe = CardScrollFramePlus(self._action_frame, hide_scrollbar=hide_scrollbars)
         self._available_expense_scrollframe.grid(row=1, column=1, sticky=grid_style.sticky.all)
 
     def populate_objects(self, accounts_list, expenses_list):

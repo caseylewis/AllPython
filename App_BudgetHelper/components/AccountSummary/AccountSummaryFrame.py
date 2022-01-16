@@ -6,6 +6,7 @@ from App_BudgetHelper.components.AccountSummary.AccountInfoFrame import *
 
 class AccountSummaryFrame(ContentFrame):
     def __init__(self, root,
+                 hide_scrollbars=True,
                  on_assign_by_name_func=None,
                  on_unassign_by_name_func=None,
                  on_account_name_changed_func=None):
@@ -17,6 +18,7 @@ class AccountSummaryFrame(ContentFrame):
         self.grid_rowconfigure(1, weight=0)
 
         self._account_expense_map_frame = AccountExpenseMapFrame(self,
+                                                                 hide_scrollbars=hide_scrollbars,
                                                                  on_assign_by_name_func=on_assign_by_name_func,
                                                                  on_unassign_by_name_func=on_unassign_by_name_func,
                                                                  on_account_name_changed_func=on_account_name_changed_func)
