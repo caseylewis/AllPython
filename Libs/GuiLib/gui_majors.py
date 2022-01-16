@@ -54,7 +54,7 @@ class NavigableTkFrame(Frame):
         self._header_bar.grid(row=row_header, column=0, columnspan=2, sticky='nsew')
 
         # CREATE NAV BAR
-        self._nav_bar = ScrollFramePlus(self, hide_scroll_bar=True)
+        self._nav_bar = ScrollFramePlus(self, hide_scrollbar=True)
         self._nav_bar.grid(row=row_content, column=col_nav, sticky='nsew')
         # NAV BAR SHOULD COLUMNS SHOULD STRETCH ALL THE WAY
         self._nav_bar.view_port.grid_columnconfigure(0, weight=1)

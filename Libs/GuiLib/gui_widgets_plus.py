@@ -110,14 +110,14 @@ class LoggerPlus(Text):
 
 
 class ScrollFramePlus(Frame):
-    def __init__(self, root, hide_scroll_bar=False, *args, **kwargs):
+    def __init__(self, root, hide_scrollbar=False, *args, **kwargs):
         super().__init__(root, *args, **kwargs)
 
         # CREATE A CANVAS OBJECT AND A VERTICAL SCROLLBAR FOR SCROLLING IT
         self._v_scrollbar = Scrollbar(self, orient=VERTICAL)
 #         self._v_scrollbar.pack(fill=Y, side=RIGHT, expand=FALSE)
         # ONLY SHOW SCROLL BAR IF ASKED FOR
-        if hide_scroll_bar is False:
+        if hide_scrollbar is False:
             self._v_scrollbar.pack(side=RIGHT, fill=Y, expand=FALSE)
         self._canvas = Canvas(self, bd=0, highlightthickness=0, yscrollcommand=self._v_scrollbar.set, bg='green')
         self._canvas.pack(side=LEFT, fill=BOTH, expand=TRUE)

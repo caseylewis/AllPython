@@ -272,8 +272,8 @@ class StandardFrame(Frame, AbstractGridWidget):
 
 
 class CardScrollFramePlus(ScrollFramePlus):
-    def __init__(self, root, *args, **kwargs):
-        super().__init__(root, bg=FRAME_BG_STANDARD, hide_scroll_bar=True)#, *args, **kwargs)
+    def __init__(self, root, hide_scrollbar=True, *args, **kwargs):
+        super().__init__(root, bg=FRAME_BG_STANDARD, hide_scrollbar=hide_scrollbar)#, *args, **kwargs)
         self.view_port.grid_columnconfigure(0, weight=1)
 
         self._frame_dict = {}

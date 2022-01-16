@@ -180,6 +180,7 @@ class AbstractEditFrame(StandardFrame):
 
 class AbstractObjectFrame(ContentFrame):
     def __init__(self, root, title, ObjectForm, ObjectCard,
+                 hide_scrollbars=True,
                  on_add_func=None,
                  on_update_func=None,
                  on_delete_by_name_func=None,
@@ -209,7 +210,7 @@ class AbstractObjectFrame(ContentFrame):
         self.object_edit_frame.grid(row=self._frame_idxs.EDIT_FRAME, column=1, **StandardFrame.grid_args)
 
         # ACCOUNT VIEW FRAME
-        self.object_scroll_frame = CardScrollFramePlus(self, hide_scroll_bar=True, **StandardFrame.style_args)
+        self.object_scroll_frame = CardScrollFramePlus(self, hide_scrollbar=hide_scrollbars, **StandardFrame.style_args)
         self.object_scroll_frame.grid(row=self._frame_idxs.VIEW_FRAME, column=0, columnspan=3, sticky='nsew')
 
     def handle_close(self):
@@ -248,16 +249,15 @@ class AbstractObjectFrame(ContentFrame):
 
 
 if __name__ == '__main__':
-    from App_BudgetHelper.components.Accounts.AccountForm import AccountForm
-    from App_BudgetHelper.components.Accounts.AccountCard import AccountCard
+    from App_BudgetHelper.components.Accounts.AccountFrame import *
 
-    class AccountFrame(AbstractObjectFrame):
-        def __init__(self, root, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
-            super().__init__(root, "Accounts", AccountForm, AccountCard,
-                             on_add_func=on_add_func,
-                             on_update_func=on_update_func,
-                             on_delete_by_name_func=on_delete_by_name_func,
-                             on_edit_by_name_func=on_edit_by_name_func)
+    # class AccountFrame(AbstractObjectFrame):
+    #     def __init__(self, root, on_add_func, on_update_func, on_delete_by_name_func, on_edit_by_name_func):
+    #         super().__init__(root, "Accounts", AccountForm, AccountCard,
+    #                          on_add_func=on_add_func,
+    #                          on_update_func=on_update_func,
+    #                          on_delete_by_name_func=on_delete_by_name_func,
+    #                          on_edit_by_name_func=on_edit_by_name_func)
 
 
     def get_object_from_list_by_name(object_name, object_list):
